@@ -1,0 +1,20 @@
+{
+  "name": "kovaak_updater",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "electron-store": "^7.0.2",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "electron": "^12.0.2"
+  }
+}
