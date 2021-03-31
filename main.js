@@ -48,11 +48,14 @@ ipcMain.on('toMain', (e, payload) => {
 app.whenReady().then(() => {
     createWindows()
 
-    if(!authenticate.isAuthenticated()) {
+    authenticate.isAuthenticated()
+    .then(isAuthenticated => {
+        windows.main.loadFile(path.join(__dirname, 'app', 'settings.html'))
+        windows.main.show()
+    }).catch(e => {
         windows.main.loadFile(path.join(__dirname, 'app', 'login.html'))
-    }
-    windows.main.show()     
-
+        windows.main.show()
+    }) 
 })
 
 
