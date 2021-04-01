@@ -1,14 +1,16 @@
 'use strict'
 
-const { app, BrowserWindow, ipcMain, session  } = require('electron')
+const { app, BrowserWindow, ipcMain, session, dialog   } = require('electron')
 
 const path = require('path')
 
-const Authenticate = require(path.join(__dirname, 'models', 'authenticate.js'))
+const Authenticate = require(path.join(__dirname, 'models', 'Authenticate.js'))
+const Settings = require(path.join(__dirname, 'models', 'Settings.js'))
 
 let windows = {}
 
 const authenticate = new Authenticate(windows, session)
+const settings = new Settings(windows, session)
 
 const createWindows = () => {
     let mainWindow = new BrowserWindow({
@@ -42,6 +44,19 @@ ipcMain.on('toMain', (e, payload) => {
         case 'openAuth' :
             openAuth()
         break
+        case 'fileBrowser' :
+            dialog.showOpenDialog({ 
+                properties: ['openDirectory'],
+                title: 'Browse For Your Kovaak Instalation Directory'                
+            }).then(file => {
+                if(!file.canceled) {
+                    windows.main.send('fromMain', {case : 'filePicked', file : file.filePaths })
+                }
+            })
+        break
+        case 'saveSettings' :
+            settings.saveSettings(payload)
+        break
     }
 })
 
@@ -50,10 +65,14 @@ app.whenReady().then(() => {
 
     authenticate.isAuthenticated()
     .then(isAuthenticated => {
-        windows.main.loadFile(path.join(__dirname, 'app', 'settings.html'))
+        if(!settings.settingsSet()) {
+            windows.main.loadFile(path.join(__dirname, 'app', 'Settings', 'settings.html'))
+        } else {
+            windows.main.loadFile(path.join(__dirname, 'app', 'Home', 'home.html'))
+        }        
         windows.main.show()
     }).catch(e => {
-        windows.main.loadFile(path.join(__dirname, 'app', 'login.html'))
+        windows.main.loadFile(path.join(__dirname, 'app', 'Login', 'login.html'))
         windows.main.show()
     }) 
 })
