@@ -7,9 +7,7 @@ module.exports = class Settings {
     settingsSet = () => {
         const saveDirectory = store.get('saveDirectory')
         const database = store.get('database') 
-
-        console.log(saveDirectory)
-        
+       
         if(!saveDirectory || !database) { return false }
         else { return true }
     }
