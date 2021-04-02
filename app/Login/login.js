@@ -11,7 +11,6 @@ document.addEventListener('click', e => {
 window.api.receive('fromMain', (payload) => {
     const container = document.querySelector('div#message')
     container.innerHTML = payload.description
-    console.log(payload)
 })
 
 

@@ -11,7 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
+    "chokidar": "^3.5.1",
     "electron-store": "^7.0.2",
+    "neat-csv": "^6.0.1",
     "url": "^0.11.0"
   },
   "devDependencies": {

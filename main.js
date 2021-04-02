@@ -6,11 +6,14 @@ const path = require('path')
 
 const Authenticate = require(path.join(__dirname, 'models', 'Authenticate.js'))
 const Settings = require(path.join(__dirname, 'models', 'Settings.js'))
+const Home = require(path.join(__dirname, 'models', 'Home.js'))
 
 let windows = {}
 
 const authenticate = new Authenticate(windows, session)
-const settings = new Settings(windows, session)
+const settings = new Settings()
+const home = new Home(windows)
+
 
 const createWindows = () => {
     let mainWindow = new BrowserWindow({
@@ -39,7 +42,7 @@ const openAuth = () => {
 ipcMain.on('toMain', (e, payload) => {
     switch(payload.case) {
         default :
-            console.log(payload)
+
         break
         case 'openAuth' :
             openAuth()
@@ -69,6 +72,7 @@ app.whenReady().then(() => {
             windows.main.loadFile(path.join(__dirname, 'app', 'Settings', 'settings.html'))
         } else {
             windows.main.loadFile(path.join(__dirname, 'app', 'Home', 'home.html'))
+            home.initWatch()
         }        
         windows.main.show()
     }).catch(e => {
