@@ -1,12 +1,12 @@
 # IPSending
 
--   [] - Break out each send
+-   [x] -   Break out each send
 
 # Main Window
 
 -   [] - Toolbar Button Clicks
 -   [] - Footer Links
--   [] - App Version
+-   [x] -   App Version
 
 # General
 

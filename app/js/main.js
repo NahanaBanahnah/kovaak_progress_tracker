@@ -125,7 +125,12 @@ window.api.receive('authClosed', payload => {
 })
 
 window.api.receive('recordedAdded', payload => {
-	console.log(payload)
+	const container = document.querySelector('#added')
+	const data = Object.values(payload.newRecord)
+	const score = Math.round(data[0].score * 100) / 100
+
+	container.innerHTML = `<img src="./icons/check.svg" />Added ${data[0].name} Score: ${score}`
+	container.classList.add('show')
 })
 
 window.api.receive('folderSelect', payload => {
