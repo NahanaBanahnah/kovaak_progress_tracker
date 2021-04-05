@@ -27,9 +27,10 @@ module.exports = class Home {
 					([_, v]) => v.file === name.file
 				)
 			) {
-				await this.addRecord(path, name)
+				let newRecord = await this.addRecord(path, name)
 				this.windows.main.send('recordedAdded', {
-					payload: this.records,
+					newRecord: newRecord,
+					records: this.records,
 				})
 			}
 		})
@@ -68,7 +69,7 @@ module.exports = class Home {
 						...this.records,
 						...added,
 					}
-					resolve()
+					resolve(added)
 				})
 				.catch(e => {
 					reject(e)
