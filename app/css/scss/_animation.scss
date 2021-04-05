@@ -1,0 +1,19 @@
+button {
+	transition: background-color 0.25s ease-in-out;
+}
+
+input {
+	transition: border 0.25s ease-in-out;
+}
+
+div#settings,
+div#home {
+	transition: all 0.25s ease-in-out;
+}
+
+button > span {
+	transition: all 0.25s ease-in-out;
+}
+button > svg {
+	transition: all 0.25s ease-in-out;
+}
