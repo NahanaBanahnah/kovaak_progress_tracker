@@ -9,6 +9,8 @@ const validChannels = [
 	'saveSettings',
 	'authClosed',
 	'recordedAdded',
+	'alternateMaximize',
+	'alternateRestore',
 ]
 
 contextBridge.exposeInMainWorld('api', {
@@ -22,8 +24,10 @@ contextBridge.exposeInMainWorld('api', {
 			ipcRenderer.on(channel, (event, ...args) => func(...args))
 		}
 	},
-	close: () => window.close(),
-	maximize: () => ipcRenderer.maximize(),
+	close: () => ipcRenderer.send('close'),
+	maximize: () => ipcRenderer.send('maximize'),
+	minimize: () => ipcRenderer.send('minimize'),
+	restore: () => ipcRenderer.send('restore'),
 })
 
 //let currWindow = remote.BrowserWindow.getFocusedWindow()

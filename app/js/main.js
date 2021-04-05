@@ -92,7 +92,16 @@ document.addEventListener('click', e => {
 	}
 
 	if (id === 'btnMax') {
+		document.querySelector('header').classList.add('maximized')
 		window.api.maximize()
+	}
+	if (id === 'btnRestore') {
+		document.querySelector('header').classList.remove('maximized')
+		window.api.restore()
+	}
+
+	if (id === 'btnMin') {
+		window.api.minimize()
 	}
 })
 
@@ -120,8 +129,14 @@ document.addEventListener('keyup', e => {
 /*-- MESSAGES
     ================================================== --*/
 
-window.api.receive('authClosed', payload => {
-	console.log(payload)
+window.api.receive('authClosed', payload => {})
+
+window.api.receive('alternateMaximize', () => {
+	document.querySelector('header').classList.add('maximized')
+})
+
+window.api.receive('alternateRestore', () => {
+	document.querySelector('header').classList.remove('maximized')
 })
 
 window.api.receive('recordedAdded', payload => {
@@ -152,8 +167,6 @@ window.api.receive('loadContent', payload => {
 	const container = document.querySelector('#main')
 	container.innerHTML = payload.html
 
-	console.log(payload)
-
 	const version = document.querySelector('#version')
 	const pfp = document.querySelector('#pfp')
 	const folder = document.querySelector('#folder')
@@ -167,7 +180,6 @@ window.api.receive('loadContent', payload => {
 
 	if (payload.userid && payload.avatar && pfp) {
 		pfp.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${payload.userid}/${payload.avatar}.png" />`
-		console.log('test')
 	}
 
 	if (payload.saveDirectory && folder) {

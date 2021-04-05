@@ -367,6 +367,10 @@ header .windowControls button {
   outline: none;
 }
 
+header .windowControls button img {
+  pointer-events: none;
+}
+
 header .windowControls button:hover {
   background: rgba(255, 255, 255, 0.1);
 }
@@ -393,6 +397,16 @@ header .windowControls button#btnRestore {
 header .windowControls button#btnClose {
   -ms-grid-column: 3;
   grid-column: 3;
+}
+
+header.maximized button#btnRestore {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+header.maximized .button#btnMax {
+  display: none;
 }
 
 div#main {
