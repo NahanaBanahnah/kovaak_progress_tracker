@@ -6,10 +6,14 @@ const {
 	dialog,
 	Menu,
 	Tray,
+	Notification,
 } = require('electron')
 
 const path = require('path')
 const fs = require('fs')
+const Store = require('electron-store')
+const store = new Store({ name: 'config.main' })
+
 const Authenticate = require(path.join(__dirname, 'models', 'Authenticate.js'))
 const Settings = require(path.join(__dirname, 'models', 'Settings.js'))
 const Home = require(path.join(__dirname, 'models', 'Home.js'))
@@ -94,10 +98,11 @@ app.whenReady().then(() => {
 			})
 			.catch(() => sendContent('login'))
 	})
-
-	windows.main.on('close', e => {
-		e.preventDefault()
-		windows.main.hide()
+	windows.main.on('maximize', () => {
+		windows.main.send('alternateMaximize')
+	})
+	windows.main.on('unmaximize', () => {
+		windows.main.send('alternateRestore')
 	})
 })
 
@@ -109,8 +114,32 @@ ipcMain.on('openAuth', () => authenticate.openAuth())
 ipcMain.on('openFileBrowser', () => openFileDialog())
 ipcMain.on('saveSettings', (e, payload) => settings.saveSettings(payload))
 
+// ---------- Window Buttons ---------- //
+ipcMain.on('close', event => {
+	event.preventDefault()
+	findWindow(event).hide()
+
+	const notified = store.get('notified')
+	if (!notified) {
+		const notification = {
+			title: 'Your Progress Is Still Be Tracked',
+			body: 'Kovaak Tracker Will Continue To Run In The Background',
+		}
+		new Notification(notification).show()
+
+		store.set('notified', true)
+	}
+})
+ipcMain.on('minimize', event => findWindow(event).minimize())
+ipcMain.on('maximize', event => findWindow(event).maximize())
+ipcMain.on('restore', event => findWindow(event).restore())
+
 /*-- HELPER FUNCTIONS
     ================================================== --*/
+
+const findWindow = event => {
+	return BrowserWindow.fromWebContents(event.sender)
+}
 const sendContent = (file, section = false, initial = false) => {
 	fs.readFile(
 		path.join(__dirname, 'app', 'html', `${file}.html`),

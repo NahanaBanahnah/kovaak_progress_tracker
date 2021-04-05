@@ -80,6 +80,10 @@ header {
 			user-select: none;
 			background: rgba(255, 255, 255, 0);
 			outline: none;
+
+			img {
+				pointer-events: none;
+			}
 		}
 		button:hover {
 			background: rgba(255, 255, 255, 0.1);
@@ -100,6 +104,16 @@ header {
 		button#btnClose {
 			grid-column: 3;
 		}
+	}
+}
+
+header.maximized {
+	button#btnRestore {
+		display: flex !important;
+	}
+
+	.button#btnMax {
+		display: none;
 	}
 }
 
@@ -296,12 +310,4 @@ footer {
 
 // .maximized #window-title {
 //   margin-left: 12px;
-// }
-
-// .maximized #restore-button {
-//   display: flex !important;
-// }
-
-// .maximized #max-button {
-//   display: none;
 // }
