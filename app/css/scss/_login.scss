@@ -1,0 +1,47 @@
+@import 'vars';
+
+div.login {
+	justify-self: center;
+	width: 80%;
+	border-radius: 5px;
+	text-align: center;
+	align-self: center;
+
+	h1 {
+		margin-bottom: 24px;
+		color: $yellow;
+	}
+
+	p {
+		font-size: 16px;
+		line-height: 19px;
+		margin-bottom: 16px;
+	}
+	button {
+		background-color: $disc-blue;
+		border-radius: 3px;
+		padding: 8px 24px;
+		outline: none;
+		cursor: pointer;
+
+		div {
+			display: flex;
+			align-items: center;
+			pointer-events: none;
+
+			img {
+				margin-right: 8px;
+				height: 28px;
+			}
+			span {
+				color: #ffffff;
+				font-weight: 600;
+				font-size: 16px;
+				line-height: 19px;
+			}
+		}
+	}
+	button:hover {
+		background-color: $disc-blue-hover;
+	}
+}
