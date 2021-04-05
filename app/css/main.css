@@ -260,6 +260,11 @@ button > svg {
   transition: all 0.25s ease-in-out;
 }
 
+span#added {
+  -webkit-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -566,16 +571,47 @@ footer div.left {
 footer div.right {
   text-align: right;
   width: 100%;
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
   padding-right: 8px;
+  height: 100%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+footer span#added {
+  margin-right: 8px;
+  opacity: 0;
+}
+
+footer span#added.show {
+  opacity: 1 !important;
+}
+
+footer span#added > img {
+  height: 8px;
+  margin-right: 8px;
 }
 
 .ui-small {
   font-size: 12px;
   line-height: 11px;
   letter-spacing: 0.05em;
+}
+
+.ui-xsmall {
+  font-size: 11px;
+  line-height: 10px;
+  letter-spacing: 0.05em;
+}
+
+.ui-green {
+  color: #9efbc9;
 }
 
 .ui-white {
