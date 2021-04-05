@@ -8,10 +8,6 @@ const {
 	Tray,
 } = require('electron')
 
-// try {
-// 	require('electron-reloader')(module)
-// } catch (_) {}
-
 const path = require('path')
 const fs = require('fs')
 const Authenticate = require(path.join(__dirname, 'models', 'Authenticate.js'))
@@ -81,6 +77,10 @@ app.whenReady().then(() => {
 	windows.main.once('ready-to-show', () => {
 		windows.main.show()
 
+		//check if the user is authnticated
+		//if yes check if they have settings
+		//if no open the auth
+
 		authenticate
 			.isAuthenticated()
 			.then(() => {
@@ -95,57 +95,22 @@ app.whenReady().then(() => {
 			.catch(() => sendContent('login'))
 	})
 
-	//check if the user is authnticated
-	//if yes check if they have settings
-	//if no open the auth
-
 	windows.main.on('close', e => {
 		e.preventDefault()
 		windows.main.hide()
 	})
 })
 
-ipcMain.on('toMain', (e, payload) => {
-	switch (payload.case) {
-		default:
-			break
-		case 'openAuth':
-			authenticate.openAuth()
-			break
-		case 'fileBrowser':
-			dialog
-				.showOpenDialog({
-					properties: ['openDirectory'],
-					title: 'Browse For Your Kovaak Instalation Directory',
-				})
-				.then(file => {
-					if (!file.canceled) {
-						const dir = path.join(
-							file.filePaths[0],
-							'FPSAimTrainer',
-							'stats'
-						)
-						let error = false
-						const stat = fs.stat(dir, (error, stats) => {
-							if (error) {
-								error = true
-							}
-							windows.main.send('folderSelect', {
-								case: 'filePicked',
-								file: file.filePaths,
-								error: error,
-							})
-						})
-					}
-				})
-			break
-		case 'saveSettings':
-			settings.saveSettings(payload)
-			break
-	}
-})
+/*-- IPC PING PONG
+    ================================================== --*/
 
-// Helper Function
+// ---------- General Sending ---------- //
+ipcMain.on('openAuth', () => authenticate.openAuth())
+ipcMain.on('openFileBrowser', () => openFileDialog())
+ipcMain.on('saveSettings', (e, payload) => settings.saveSettings(payload))
+
+/*-- HELPER FUNCTIONS
+    ================================================== --*/
 const sendContent = (file, section = false, initial = false) => {
 	fs.readFile(
 		path.join(__dirname, 'app', 'html', `${file}.html`),
@@ -162,4 +127,32 @@ const sendContent = (file, section = false, initial = false) => {
 			windows.main.send('loadContent', payload)
 		}
 	)
+}
+
+const openFileDialog = () => {
+	dialog
+		.showOpenDialog({
+			properties: ['openDirectory'],
+			title: 'Browse For Your Kovaak Instalation Directory',
+		})
+		.then(file => {
+			if (!file.canceled) {
+				const dir = path.join(
+					file.filePaths[0],
+					'FPSAimTrainer',
+					'stats'
+				)
+				let error = false
+				const stat = fs.stat(dir, (error, stats) => {
+					if (error) {
+						error = true
+					}
+					windows.main.send('folderSelect', {
+						case: 'filePicked',
+						file: file.filePaths,
+						error: error,
+					})
+				})
+			}
+		})
 }
