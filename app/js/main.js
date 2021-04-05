@@ -56,16 +56,12 @@ document.addEventListener('click', e => {
 
 	// ---------- LOGIN ---------- //
 	if (id === 'login') {
-		window.api.send('toMain', {
-			case: 'openAuth',
-		})
+		window.api.send('openAuth')
 	}
 
 	// ---------- SETTINGS ---------- //
 	if (id === 'file_browse') {
-		window.api.send('toMain', {
-			case: 'fileBrowser',
-		})
+		window.api.send('openFileBrowser')
 	}
 
 	if (id === 'submit') {
@@ -73,11 +69,10 @@ document.addEventListener('click', e => {
 		const database = document.querySelector('#database')
 
 		const payload = {
-			case: 'saveSettings',
 			saveDirectory: folder.value,
 			database: database.value,
 		}
-		window.api.send('toMain', payload)
+		window.api.send('saveSettings', payload)
 		closeSettings()
 	}
 
@@ -125,6 +120,14 @@ document.addEventListener('keyup', e => {
 /*-- MESSAGES
     ================================================== --*/
 
+window.api.receive('authClosed', payload => {
+	console.log(payload)
+})
+
+window.api.receive('recordedAdded', payload => {
+	console.log(payload)
+})
+
 window.api.receive('folderSelect', payload => {
 	let display = `${payload.file[0]}
     <br /><span class="error">This directory does not contain the correct files. Please make sure you chose the correct directory</span>`
@@ -159,6 +162,7 @@ window.api.receive('loadContent', payload => {
 
 	if (payload.userid && payload.avatar && pfp) {
 		pfp.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${payload.userid}/${payload.avatar}.png" />`
+		console.log('test')
 	}
 
 	if (payload.saveDirectory && folder) {
@@ -185,8 +189,4 @@ window.api.receive('loadContent', payload => {
 	if (payload.section === 'settings') {
 		openSettings()
 	}
-})
-
-window.api.receive('fromMain', payload => {
-	console.log(payload)
 })

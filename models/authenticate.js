@@ -5,6 +5,7 @@ const axios = require('axios').default
 const Store = require('electron-store')
 const store = new Store({ name: 'config.main' })
 const config = require(path.join(app.getAppPath(), 'config', 'config.js'))
+const fs = require('fs')
 
 const redirectUri = 'http://localhost/oauth/redirect'
 
@@ -95,18 +96,37 @@ module.exports = class Authenticate {
 						)
 						.then(res => this.localizeInfo(res.data))
 						.then(() => this.storeUserInfo())
-
-					this.windows.main.loadFile(
-						path.join(app.getAppPath(), 'app', 'settings.html')
-					)
+						.then(() => {
+							fs.readFile(
+								path.join(
+									app.getAppPath(),
+									'app',
+									'html',
+									`home.html`
+								),
+								'utf8',
+								(err, html) => {
+									const payload = {
+										userid: this.userData.id,
+										avatar: this.userData.avatar,
+										html: html,
+										section: 'settings',
+										initial: true,
+									}
+									this.windows.main.send(
+										'loadContent',
+										payload
+									)
+								}
+							)
+						})
 				}
 
 				//display an error if there is one; or user cancels
 				if (urlObj.query.error) {
 					const errorCode = urlObj.query.error
 					const errorDesc = urlObj.query.error_description
-					this.windows.main.send('fromMain', {
-						case: 'authError',
+					this.windows.main.send('authClosed', {
 						error: errorCode,
 						description: errorDesc,
 					})

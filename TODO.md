@@ -11,6 +11,8 @@
 # General
 
 -   [] - Autoupdate from repo
+-   [] - On intial setup return back button after settings
+-   [] - On initial setup show '...Watching' when watching
 
 # Settings
 

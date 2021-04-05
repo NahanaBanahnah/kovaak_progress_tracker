@@ -1,7 +1,15 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 const path = require('path')
-const validChannels = ['fromMain', 'toMain', 'loadContent', 'folderSelect']
+const validChannels = [
+	'loadContent',
+	'folderSelect',
+	'openAuth',
+	'openFileBrowser',
+	'saveSettings',
+	'authClosed',
+	'recordedAdded',
+]
 
 contextBridge.exposeInMainWorld('api', {
 	send: (channel, data) => {
@@ -14,12 +22,8 @@ contextBridge.exposeInMainWorld('api', {
 			ipcRenderer.on(channel, (event, ...args) => func(...args))
 		}
 	},
-	close: () => {
-		window.close()
-	},
-	maximize: () => {
-		ipcRenderer.maximize()
-	},
+	close: () => window.close(),
+	maximize: () => ipcRenderer.maximize(),
 })
 
 //let currWindow = remote.BrowserWindow.getFocusedWindow()
