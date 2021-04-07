@@ -7,7 +7,7 @@ const chokidar = require('chokidar')
 const neatCsv = require('neat-csv')
 
 module.exports = class Home {
-	constructor(windows) {
+	constructor(windows = null) {
 		this.windows = windows
 		this.saveDirectory = store.get('saveDirectory')
 		this.watchPath = path.join(this.saveDirectory, 'FPSAimTrainer', 'stats')
@@ -18,6 +18,7 @@ module.exports = class Home {
 
 	initWatch = async () => {
 		this.records = await this.getRecords()
+		this.windows.main.send('initProgress', this.records)
 
 		chokidar.watch(this.watchPath).on('add', async path => {
 			let name = this.formatName(path)

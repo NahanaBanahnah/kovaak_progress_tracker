@@ -4,4 +4,68 @@ div.home {
 	text-align: center;
 	align-self: center;
 	height: 100%;
+	display: grid;
+	grid-template-rows: 64px 1fr;
+
+	div.select {
+		position: relative;
+		width: 256px;
+
+		select {
+			width: 100%;
+			cursor: pointer;
+			border-radius: 0;
+			background-color: rgba(0, 0, 0, 0.1);
+			border: none;
+			border: 2px solid rgba(255, 255, 255, 0.3);
+			color: rgba(255, 255, 255, 0.6);
+			padding: 10px;
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			padding: 10px;
+			align-self: center;
+			outline: none;
+		}
+		select:hover {
+			color: rgba(103, 208, 241, 0.9);
+			border: 2px solid rgba(103, 208, 241, 0.9);
+		}
+		select:focus {
+			color: rgba(103, 208, 241, 0.8);
+			border: 2px solid rgba(103, 208, 241, 0.5);
+		}
+
+		option {
+			background-color: rgba(0, 0, 0, 0.9);
+		}
+
+		.select-icon {
+			position: absolute;
+			top: 2px;
+			right: 4px;
+			width: 36px;
+			height: 36px;
+			pointer-events: none;
+			padding-left: 5px;
+			transition: background-color 0.3s ease, border-color 0.3s ease;
+		}
+		.select-icon svg.icon {
+			transition: fill 0.3s ease;
+			fill: rgba(255, 255, 255, 0.6);
+		}
+
+		select:hover ~ .select-icon svg.icon,
+		select:focus ~ .select-icon svg.icon {
+			fill: rgba(103, 208, 241, 0.9);
+		}
+	}
+}
+.chart_container {
+	position: relative;
+	height: 65vh;
+	width: 90vw;
+	display: grid;
+}
+#progress {
 }

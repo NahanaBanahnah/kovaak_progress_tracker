@@ -27,8 +27,8 @@ const settings = new Settings()
 // create the main window and the auth modal
 const createWindows = () => {
 	const mainWindow = new BrowserWindow({
-		width: 1200,
-		height: 800,
+		width: 1600,
+		height: 900,
 		center: true,
 		frame: false,
 		show: false,
