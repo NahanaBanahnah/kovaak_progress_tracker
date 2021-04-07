@@ -228,10 +228,82 @@ div.home {
       justify-self: center;
   width: 90%;
   text-align: center;
+  -ms-grid-row-align: center;
+      align-self: center;
+  height: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 64px 1fr;
+      grid-template-rows: 64px 1fr;
+}
+
+div.home div.select {
+  position: relative;
+  width: 256px;
+}
+
+div.home div.select select {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 10px;
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
-  height: 100%;
+  outline: none;
+}
+
+div.home div.select select:hover {
+  color: rgba(103, 208, 241, 0.9);
+  border: 2px solid rgba(103, 208, 241, 0.9);
+}
+
+div.home div.select select:focus {
+  color: rgba(103, 208, 241, 0.8);
+  border: 2px solid rgba(103, 208, 241, 0.5);
+}
+
+div.home div.select option {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+div.home div.select .select-icon {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  padding-left: 5px;
+  -webkit-transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+div.home div.select .select-icon svg.icon {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+  fill: rgba(255, 255, 255, 0.6);
+}
+
+div.home div.select select:hover ~ .select-icon svg.icon,
+div.home div.select select:focus ~ .select-icon svg.icon {
+  fill: rgba(103, 208, 241, 0.9);
+}
+
+.chart_container {
+  position: relative;
+  height: 65vh;
+  width: 90vw;
+  display: -ms-grid;
+  display: grid;
 }
 
 button {
@@ -245,22 +317,11 @@ input {
 }
 
 div#settings,
-div#home {
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-button > span {
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-button > svg {
-  -webkit-transition: all 0.25s ease-in-out;
-  transition: all 0.25s ease-in-out;
-}
-
-span#added {
+div#home,
+button > span,
+button > svg,
+span#added,
+select {
   -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
 }
@@ -280,8 +341,8 @@ html {
 *,
 *:before,
 *:after {
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 html,

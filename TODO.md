@@ -4,9 +4,10 @@
 
 # Main Window
 
--   [] - Toolbar Button Clicks
+-   [x] -   Toolbar Button Clicks
 -   [] - Footer Links
 -   [x] -   App Version
+-   [] - Predefined Line Colors
 
 # General
 
