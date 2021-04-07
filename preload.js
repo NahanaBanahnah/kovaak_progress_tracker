@@ -11,6 +11,8 @@ const validChannels = [
 	'recordedAdded',
 	'alternateMaximize',
 	'alternateRestore',
+	'records',
+	'initProgress',
 ]
 
 contextBridge.exposeInMainWorld('api', {
