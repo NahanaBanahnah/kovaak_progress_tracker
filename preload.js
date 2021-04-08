@@ -13,6 +13,9 @@ const validChannels = [
 	'alternateRestore',
 	'records',
 	'initProgress',
+	'updateAvailable',
+	'updateDownloaded',
+	'restartToUpdate',
 ]
 
 contextBridge.exposeInMainWorld('api', {

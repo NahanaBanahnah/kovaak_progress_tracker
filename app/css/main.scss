@@ -248,6 +248,9 @@ footer {
 	div.left {
 		align-self: center;
 		padding-left: 8px;
+		display: grid;
+		grid-template-columns: auto auto auto 1fr;
+		gap: 16px;
 	}
 	div.right {
 		text-align: right;

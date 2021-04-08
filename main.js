@@ -9,6 +9,7 @@ const {
 	Notification,
 } = require('electron')
 
+const { autoUpdater } = require('electron-updater')
 const path = require('path')
 const fs = require('fs')
 const Store = require('electron-store')
@@ -80,6 +81,7 @@ app.whenReady().then(() => {
 	//load main window with loading bar once the DOM is ready
 	windows.main.once('ready-to-show', () => {
 		windows.main.show()
+		autoUpdater.checkForUpdatesAndNotify()
 
 		//check if the user is authnticated
 		//if yes check if they have settings
@@ -98,6 +100,7 @@ app.whenReady().then(() => {
 			})
 			.catch(() => sendContent('login'))
 	})
+
 	windows.main.on('maximize', () => {
 		windows.main.send('alternateMaximize')
 	})
@@ -133,6 +136,19 @@ ipcMain.on('close', event => {
 ipcMain.on('minimize', event => findWindow(event).minimize())
 ipcMain.on('maximize', event => findWindow(event).maximize())
 ipcMain.on('restore', event => findWindow(event).restore())
+
+// ===================== REWRITE FOR CORRECT IPC SENDING!!!!!!!!!!!!!!!!!!!!
+
+autoUpdater.on('update-available', () => {
+	windows.main.send('updateAvailable')
+})
+autoUpdater.on('update-downloaded', () => {
+	windows.main.send('updateDownloaded')
+})
+
+ipcMain.on('restartToUpdate', () => {
+	autoUpdater.quitAndInstall()
+})
 
 /*-- HELPER FUNCTIONS
     ================================================== --*/

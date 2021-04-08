@@ -11,6 +11,8 @@ div#home,
 button > span,
 button > svg,
 span#added,
-select {
+select,
+#update,
+.spinner {
 	transition: all 0.25s ease-in-out;
 }

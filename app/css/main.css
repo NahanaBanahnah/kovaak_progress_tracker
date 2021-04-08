@@ -92,6 +92,90 @@
   }
 }
 
+.spinner {
+  width: 50px;
+  text-align: center;
+  opacity: 0;
+}
+
+#update {
+  opacity: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+#update img {
+  margin-left: 8px;
+}
+
+.spinner.show,
+#update.show {
+  opacity: 1;
+}
+
+#restartToUpdate {
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.spinner > div {
+  background-color: rgba(255, 255, 255, 0.4);
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
+
+@keyframes sk-stretchdelay {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
+
 div.login {
   -ms-grid-column-align: center;
       justify-self: center;
@@ -321,7 +405,9 @@ div#home,
 button > span,
 button > svg,
 span#added,
-select {
+select,
+#update,
+.spinner {
   -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
 }
@@ -637,10 +723,14 @@ footer {
 }
 
 footer div.left {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
+  -ms-grid-row-align: center;
       align-self: center;
   padding-left: 8px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto auto auto 1fr;
+      grid-template-columns: auto auto auto 1fr;
+  gap: 16px;
 }
 
 footer div.right {
