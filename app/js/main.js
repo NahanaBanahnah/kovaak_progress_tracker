@@ -247,6 +247,10 @@ document.addEventListener('click', e => {
 	if (id === 'btnMin') {
 		window.api.minimize()
 	}
+
+	if (id === 'restartToUpdate') {
+		window.api.send('restartToUpdate')
+	}
 })
 
 /*-- BUBBLING KEYUP EVENTS
@@ -373,4 +377,20 @@ window.api.receive('loadContent', payload => {
 	if (payload.section === 'settings') {
 		openSettings()
 	}
+})
+
+window.api.receive('updateAvailable', () => {
+	document.querySelector('#update').innerHTML = 'Downloading Update'
+
+	document.querySelector('#update').classList.add('show')
+	document.querySelector('#downloading').classList.add('show')
+})
+
+window.api.receive('updateDownloaded', () => {
+	document.querySelector('#update').innerHTML =
+		'<a id="restartToUpdate">Update available. Restart to update <img src="./icons/refresh.svg" alt="restart" /> </a>'
+
+	document.querySelector('#update').classList.add('ui-green')
+
+	document.querySelector('#downloading').classList.remove('show')
 })
