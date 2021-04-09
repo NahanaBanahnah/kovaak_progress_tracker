@@ -18,6 +18,7 @@ module.exports = class Home {
 
 	initWatch = async () => {
 		this.records = await this.getRecords()
+		console.log('test')
 		this.windows.main.send('initProgress', this.records)
 
 		chokidar.watch(this.watchPath).on('add', async path => {
@@ -47,7 +48,7 @@ module.exports = class Home {
 					resolve(res.data)
 				})
 				.catch(e => {
-					reject(e)
+					resolve({})
 				})
 		})
 	}

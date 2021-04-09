@@ -1,7 +1,7 @@
 {
 	"name": "kovaak_progress_tracker",
 	"version": "0.1.0",
-	"description": "",
+	"description": "Track Your Score Progress In Kovaak Challenges",
 	"main": "main.js",
 	"scripts": {
 		"start": "electron .",
@@ -30,5 +30,15 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/NahanaBanahnah/kovaak_progress_tracker.git"
+	},
+	"build": {
+		"productName": "Kovaak Progress Tracker",
+		"publish": [
+			{
+				"provider": "github",
+				"owner": "NahanaBanahnah",
+				"repo": "kovaak_progress_tracker"
+			}
+		]
 	}
 }
