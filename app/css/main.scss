@@ -168,7 +168,7 @@ div.container {
 				pointer-events: none;
 			}
 			svg {
-				fill: rgba(255, 255, 255, 0.9);
+				fill: $white;
 			}
 		}
 
@@ -187,18 +187,27 @@ div.container {
 			}
 		}
 
+		button#back.off {
+			pointer-events: none;
+			opacity: 0;
+		}
+		button#back {
+			pointer-events: initial;
+			opacity: 1;
+		}
+
 		button#settings:hover > span {
 			right: 25px;
 			opacity: 1;
-			color: rgba(103, 208, 241, 0.9);
+			color: $blue;
 		}
 		button#settings:hover > svg {
 			transform: rotate(-90deg);
-			fill: rgba(103, 208, 241, 0.9);
+			fill: $blue;
 		}
 		button#back:hover > svg {
 			transform: translate(-15px);
-			fill: rgba(103, 208, 241, 0.9);
+			fill: $blue;
 		}
 		button.pfp {
 			background-color: rgba(0, 0, 0, 0.5);

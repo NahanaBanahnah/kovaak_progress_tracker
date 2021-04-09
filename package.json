@@ -1,6 +1,6 @@
 {
 	"name": "kovaak_progress_tracker",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "Track Your Score Progress In Kovaak Challenges",
 	"main": "main.js",
 	"scripts": {
