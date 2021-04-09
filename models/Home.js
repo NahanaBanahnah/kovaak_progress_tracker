@@ -7,20 +7,27 @@ const chokidar = require('chokidar')
 const neatCsv = require('neat-csv')
 
 module.exports = class Home {
-	constructor(windows = null) {
+	constructor(windows = null, database = null, saveDirectory = null) {
 		this.windows = windows
-		this.saveDirectory = store.get('saveDirectory')
+		this.saveDirectory = saveDirectory
+			? saveDirectory
+			: store.get('saveDirectory')
 		this.watchPath = path.join(this.saveDirectory, 'FPSAimTrainer', 'stats')
-		this.database = store.get('database')
+		this.database = database ? database : store.get('database')
 		this.user = store.get('id')
 		this.records = null
 	}
 
+	// ---------- start the watching ---------- //
+
 	initWatch = async () => {
+		//first let get any current records
 		this.records = await this.getRecords()
-		console.log('test')
+
+		//tell main we're watching
 		this.windows.main.send('initProgress', this.records)
 
+		//watch the directory
 		chokidar.watch(this.watchPath).on('add', async path => {
 			let name = this.formatName(path)
 
@@ -38,6 +45,7 @@ module.exports = class Home {
 		})
 	}
 
+	// ---------- get the users records or return an empty obj ---------- //
 	getRecords = () => {
 		return new Promise(resolve => {
 			axios
@@ -53,6 +61,7 @@ module.exports = class Home {
 		})
 	}
 
+	// ---------- when a record is added push to db ---------- //
 	addRecord = async (path, name) => {
 		let score = await this.findScore(path)
 		let payload = {
@@ -74,11 +83,12 @@ module.exports = class Home {
 					resolve(added)
 				})
 				.catch(e => {
-					reject(e)
+					console.log(e.error)
 				})
 		})
 	}
 
+	// ---------- pull info from the name ---------- //
 	formatName = name => {
 		const main = path.parse(name).base.split('-')
 		const file = {
@@ -90,6 +100,7 @@ module.exports = class Home {
 		return file
 	}
 
+	// ---------- find the score in the csv file ---------- //
 	findScore = file => {
 		return new Promise(resolve => {
 			fs.readFile(file, (error, data) => {

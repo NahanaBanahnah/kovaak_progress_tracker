@@ -8,13 +8,16 @@
 -   [] - Footer Links
 -   [x] -   App Version
 -   [] - Predefined Line Colors
+-   [x] -   Adding Each time app opens --- Look further into this
 
 # General
 
 -   [] - Autoupdate from repo
--   [] - On intial setup return back button after settings
--   [] - On initial setup show '...Watching' when watching
--   [] - General File Cleaning, Linting, Commenting (will do this for a minor update to test auto updating)
+-   [x] -   On intial setup return back button after settings
+-   [x] -   On initial setup show '...Watching' when watching
+-   [x] -   On initial setup start file watching and adding
+-   [x] -   General File Cleaning, Linting, Commenting (will do this for a minor update to test auto updating)
+-   [x] -   don't allow 2 instances
 
 # Settings
 

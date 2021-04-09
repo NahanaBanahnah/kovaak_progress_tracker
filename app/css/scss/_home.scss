@@ -28,8 +28,8 @@ div.home {
 			outline: none;
 		}
 		select:hover {
-			color: rgba(103, 208, 241, 0.9);
-			border: 2px solid rgba(103, 208, 241, 0.9);
+			color: $blue;
+			border: 2px solid $blue;
 		}
 		select:focus {
 			color: rgba(103, 208, 241, 0.8);
@@ -57,7 +57,7 @@ div.home {
 
 		select:hover ~ .select-icon svg.icon,
 		select:focus ~ .select-icon svg.icon {
-			fill: rgba(103, 208, 241, 0.9);
+			fill: $blue;
 		}
 	}
 }
@@ -66,6 +66,4 @@ div.home {
 	height: 65vh;
 	width: 90vw;
 	display: grid;
-}
-#progress {
 }

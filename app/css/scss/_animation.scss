@@ -16,3 +16,7 @@ select,
 .spinner {
 	transition: all 0.25s ease-in-out;
 }
+
+button#back {
+	transition: opacity 0.25s ease-in-out 0.25s;
+}
