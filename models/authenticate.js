@@ -38,7 +38,7 @@ module.exports = class Authenticate {
 		}
 	}
 
-	//check if the user is already logged in
+	// ---------- Check User Auth ---------- //
 	isAuthenticated = () => {
 		const access_token = store.get('access_token')
 		const token_type = store.get('token_type')
@@ -59,14 +59,14 @@ module.exports = class Authenticate {
 		})
 	}
 
-	//open the auth window
+	// ---------- Open Auth ---------- //
 	openAuth = () => {
 		this.windows.modal.loadURL(config.authUrl)
 		this.windows.modal.show()
 		this.waitForRedirect()
 	}
 
-	//wait for a redirection from the auth window
+	// ---------- Wait for Redirect from Auth Window ---------- //
 	waitForRedirect = () => {
 		//filter our uri
 		const filter = {
@@ -139,7 +139,7 @@ module.exports = class Authenticate {
 		)
 	}
 
-	//API to discord auth to check users credentials
+	// ---------- API To discord oAuth2 ---------- //
 	authenicateUser = () => {
 		return axios({
 			method: 'POST',
@@ -151,7 +151,7 @@ module.exports = class Authenticate {
 		})
 	}
 
-	//get the users data after they've logged in
+	// ---------- Get the user data ---------- //
 	getUserdata = (tokenType, token) => {
 		return axios({
 			method: 'get',
@@ -162,7 +162,7 @@ module.exports = class Authenticate {
 		})
 	}
 
-	//store the info we want from discords API response
+	// ---------- store the info we want from discord response ---------- //
 	localizeInfo = payload => {
 		return new Promise((resolve, reject) => {
 			Object.keys(payload)
@@ -172,7 +172,7 @@ module.exports = class Authenticate {
 		})
 	}
 
-	//save the users tokens for later logins
+	// ---------- save the user tokens ---------- //
 	storeUserInfo = () => {
 		const userData = Object.fromEntries(
 			Object.entries(this.userData).filter(([_, v]) => v != null)
@@ -182,6 +182,7 @@ module.exports = class Authenticate {
 		}
 	}
 
+	// ---------- help func to get info ---------- //
 	getUserInfo = () => {
 		return {
 			userid: store.get('id'),
