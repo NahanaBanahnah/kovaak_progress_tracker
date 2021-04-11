@@ -2,8 +2,8 @@ const app = require('electron').app
 const path = require('path')
 const url = require('url')
 const axios = require('axios').default
-const Store = require('electron-store')
-const store = new Store({ name: 'config.main' })
+const storage = require('electron-settings')
+
 const config = require(path.join(app.getAppPath(), 'config', 'config.js'))
 const fs = require('fs')
 
@@ -39,24 +39,17 @@ module.exports = class Authenticate {
 	}
 
 	// ---------- Check User Auth ---------- //
-	isAuthenticated = () => {
-		const access_token = store.get('access_token')
-		const token_type = store.get('token_type')
+	isAuthenticated = async () => {
+		const access_token = await storage.get('auth.access_token')
+		const token_type = await storage.get('auth.token_type')
 
-		return new Promise((resolve, reject) => {
-			if (!access_token || !token_type) {
-				reject(false)
-			}
+		if (!access_token || !token_type) {
+			return false
+		}
 
-			return this.getUserdata(token_type, access_token)
-				.then(res => this.localizeInfo(res.data))
-				.then(() => {
-					resolve(true)
-				})
-				.catch(() => {
-					reject(false)
-				})
-		})
+		let userData = await this.getUserdata(token_type, access_token)
+		await this.localizeInfo(userData)
+		return true
 	}
 
 	// ---------- Open Auth ---------- //
@@ -173,20 +166,25 @@ module.exports = class Authenticate {
 	}
 
 	// ---------- save the user tokens ---------- //
-	storeUserInfo = () => {
+	storeUserInfo = async () => {
 		const userData = Object.fromEntries(
 			Object.entries(this.userData).filter(([_, v]) => v != null)
 		)
 		for (const [key, value] of Object.entries(userData)) {
-			store.set(key, value)
+			let storeKey = `auth.${key}`
+			console.log(storeKey)
+			await storage.set(storeKey, value)
 		}
 	}
 
 	// ---------- help func to get info ---------- //
-	getUserInfo = () => {
+	getUserInfo = async () => {
+		let id = await storage.get('auth.id')
+		let avatar = await storage.get('auth.avatar')
+
 		return {
-			userid: store.get('id'),
-			avatar: store.get('avatar'),
+			userid: id,
+			avatar: avatar,
 		}
 	}
 }

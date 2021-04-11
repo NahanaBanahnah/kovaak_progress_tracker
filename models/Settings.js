@@ -1,33 +1,38 @@
 const { rejects } = require('assert')
-const Store = require('electron-store')
 const { resolve } = require('url')
-const store = new Store({ name: 'config.main' })
+const storage = require('electron-settings')
 
 module.exports = class Settings {
 	// ---------- check if the user has the min settings needed ---------- //
-	settingsSet = () => {
-		const saveDirectory = store.get('saveDirectory')
-		const database = store.get('database')
+	settingsSet = async () => {
+		const saveDirectory = await storage.get('settings.saveDirectory')
+		const database = await storage.get('settings.database')
 
 		if (!saveDirectory || !database) {
 			return false
 		} else {
-			return true
+			return {
+				saveDirectory: saveDirectory,
+				database: database,
+			}
 		}
 	}
 
 	// ---------- save users settings ---------- //
-	saveSettings = payload => {
+	saveSettings = async payload => {
 		payload.database += payload.database.endsWith('/') ? '' : '/'
-		store.set('saveDirectory', payload.saveDirectory)
-		store.set('database', payload.database)
+		await storage.set('settings.saveDirectory', payload.saveDirectory)
+		await storage.set('settings.database', payload.database)
+		return
 	}
 
 	// ---------- get the users settings ---------- //
-	getSettings = () => {
+	getSettings = async () => {
+		let saveDirectory = await storage.get('settings.saveDirectory')
+		let database = await storage.get('settings.database')
 		return {
-			saveDirectory: store.get('saveDirectory'),
-			database: store.get('database'),
+			saveDirectory: saveDirectory,
+			database: database,
 		}
 	}
 }

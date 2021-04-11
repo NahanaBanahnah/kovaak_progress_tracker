@@ -1,9 +1,12 @@
 'use strict'
+import { standard, ui } from './colors.js'
 
 /*-- GLOBAL VARS
     ================================================== --*/
 
 let chart
+
+let ac = { standard: { ...standard }, material: { ...ui } }
 
 /*-- BUBBLING CLICK EVENTS
     ================================================== --*/
@@ -358,29 +361,20 @@ const buildLabels = records => {
 }
 
 //set up the dataset
-const buildDataset = (records, labels) => {
-	return records.map(item => {
-		let obj = {}
+const buildDataset = async (records, labels) => {
+	let obj = []
+	for (const [k, item] of Object.entries(records)) {
+		const color = await getColors(item[0])
+		obj[k] = {}
 
-		// ---------- TODO  ---------- //
-		//instead of doing a random color
-		//pick from a list until list is gone
-		//then do a random color
-		//each color will be stored so the lines dont change on a refresh of data
-		const randomBetween = (min, max) =>
-			min + Math.floor(Math.random() * (max - min + 1))
-		const r = randomBetween(0, 255)
-		const g = randomBetween(0, 255)
-		const b = randomBetween(0, 255)
+		obj[k].label = item[0]
+		obj[k].fill = false
+		obj[k].hidden = false
+		obj[k].borderColor = `rgb(${color.r}, ${color.g}, ${color.b})`
+		obj[k].backgroundColor = `rgba(${color.r}, ${color.g}, ${color.b}, 0.5)`
+		obj[k].tension = 0
 
-		obj.label = item[0]
-		obj.fill = false
-		obj.hidden = false
-		obj.borderColor = `rgb(${r}, ${g}, ${b})`
-		obj.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.5)`
-		obj.tension = 0
-
-		obj.data = labels.dates.map(d => {
+		obj[k].data = labels.dates.map(d => {
 			let results = item[1].filter(v => v.date === d)
 
 			// ---------- TODO  ---------- //
@@ -400,16 +394,81 @@ const buildDataset = (records, labels) => {
 				return false
 			}
 		})
+	}
+	console.log(obj)
+	return obj
+}
 
-		return obj
-	})
+const getColors = async title => {
+	let userPrefs = await window.api.getColors()
+	console.log(userPrefs)
+	userPrefs = userPrefs ? userPrefs : []
+	let custom = true
+	let color
+
+	//see if the title is in store
+	let d = userPrefs.find(item => item.title === title)
+
+	//if it is remove it from appropriate object (so it doenst duplicate)
+	if (d) {
+		if (d.pallet !== 'custom') {
+			ac[d.pallet] = { ...setAvailable(d.pallet, d.color) }
+		}
+
+		return d.color
+	}
+
+	//if its not check length of standrd and ui (set to a new const so we can see the length of that too)
+	let pallet = Object.keys(ac.standard).length > 0 ? 'standard' : 'material'
+
+	//if that const has a length pallet from that
+	if (Object.keys(ac[pallet]).length > 0) {
+		let obj = ac[pallet]
+		let keys = Object.keys(obj)
+		color = obj[keys[(keys.length * Math.random()) << 0]]
+
+		ac[pallet] = { ...setAvailable(pallet, color) }
+	} else {
+		//if not build a custom color
+		pallet = 'custom'
+		const randomBetween = (min, max) =>
+			min + Math.floor(Math.random() * (max - min + 1))
+		color = {
+			r: randomBetween(0, 255),
+			g: randomBetween(0, 255),
+			b: randomBetween(0, 255),
+		}
+	}
+
+	//store the new color with an async invoke handle message
+	let newPref = {
+		title: title,
+		pallet: pallet,
+		color: { ...color },
+	}
+	userPrefs.push(newPref)
+	console.log('bottmo', userPrefs)
+	await window.api.setColors(userPrefs)
+
+	//then return color as rgb array
+	return { ...color }
+}
+
+const setAvailable = (pallet, color) => {
+	return Object.fromEntries(
+		Object.entries(ac[pallet]).filter(
+			([k, v]) =>
+				Object.entries(v).toString() !==
+				Object.entries(color).toString()
+		)
+	)
 }
 
 //show the chart
-const displayChart = records => {
+const displayChart = async records => {
 	const useable = getUsableRecords(records)
 	const labels = buildLabels(useable)
-	const dataset = buildDataset(useable, labels)
+	const dataset = await buildDataset(useable, labels)
 
 	const ctx = document.querySelector('#progress').getContext('2d')
 	const options = {
@@ -422,7 +481,7 @@ const displayChart = records => {
 		datasets: dataset,
 		plugins: {
 			legend: {
-				align: 'left',
+				align: 'start',
 			},
 		},
 	}
@@ -436,11 +495,11 @@ const displayChart = records => {
 }
 
 //update charts when new data is pushed
-const updateCharts = records => {
+const updateCharts = async records => {
 	const useable = getUsableRecords(records)
 	const labels = buildLabels(useable)
-	const dataset = buildDataset(useable, labels)
-
+	const dataset = await buildDataset(useable, labels)
+	console.log('updating')
 	chart.data.labels = labels.labels
 	chart.data.datasets = dataset
 
