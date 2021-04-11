@@ -5,7 +5,7 @@ const axios = require('axios').default
 const storage = require('electron-settings')
 
 const config = require(path.join(app.getAppPath(), 'config', 'config.js'))
-const fs = require('fs')
+const fs = require('fs').promises
 
 const redirectUri = 'http://localhost/oauth/redirect'
 
@@ -48,7 +48,7 @@ module.exports = class Authenticate {
 		}
 
 		let userData = await this.getUserdata(token_type, access_token)
-		await this.localizeInfo(userData)
+		this.localizeInfo(userData)
 		return true
 	}
 
@@ -60,7 +60,7 @@ module.exports = class Authenticate {
 	}
 
 	// ---------- Wait for Redirect from Auth Window ---------- //
-	waitForRedirect = () => {
+	waitForRedirect = async () => {
 		//filter our uri
 		const filter = {
 			urls: [redirectUri + '*'],
@@ -68,7 +68,7 @@ module.exports = class Authenticate {
 
 		this.session.defaultSession.webRequest.onBeforeRequest(
 			filter,
-			(details, callback) => {
+			async (details, callback) => {
 				const urlObj = url.parse(details.url, true)
 
 				//credentials are good
@@ -76,43 +76,41 @@ module.exports = class Authenticate {
 					const accessCode = urlObj.query.code
 					this.params.code = accessCode
 					this.windows.modal.close()
-					//loging you in message
 
 					//get the oauth info and store it for later
-					this.authenicateUser()
-						.then(res => this.localizeInfo(res.data))
-						.then(res =>
-							this.getUserdata(
-								this.userData.token_type,
-								this.userData.access_token
-							)
-						)
-						.then(res => this.localizeInfo(res.data))
-						.then(() => this.storeUserInfo())
-						.then(() => {
-							fs.readFile(
-								path.join(
-									app.getAppPath(),
-									'app',
-									'html',
-									`home.html`
-								),
-								'utf8',
-								(err, html) => {
-									const payload = {
-										userid: this.userData.id,
-										avatar: this.userData.avatar,
-										html: html,
-										section: 'settings',
-										initial: true,
-									}
-									this.windows.main.send(
-										'loadContent',
-										payload
-									)
-								}
-							)
-						})
+					const res = await this.authenicateUser()
+					await this.localizeInfo(res.data)
+
+					//get the user data from discord
+					const userData = await this.getUserdata(
+						this.userData.token_type,
+						this.userData.access_token
+					)
+
+					//store all the info
+					await this.localizeInfo(userData.data)
+					await this.storeUserInfo()
+
+					//built the settings file to display
+					const file = path.join(
+						app.getAppPath(),
+						'app',
+						'html',
+						`home.html`
+					)
+					const html = await fs.readFile(file, 'utf8')
+
+					//payload to push to the new page
+					const payload = {
+						userid: this.userData.id,
+						avatar: this.userData.avatar,
+						html: html,
+						section: 'settings',
+						initial: true,
+					}
+
+					this.windows.main.send('loadContent', payload)
+					return true
 				}
 
 				//display an error if there is one; or user cancels
@@ -133,8 +131,8 @@ module.exports = class Authenticate {
 	}
 
 	// ---------- API To discord oAuth2 ---------- //
-	authenicateUser = () => {
-		return axios({
+	authenicateUser = async () => {
+		return await axios({
 			method: 'POST',
 			url: 'https://discord.com/api/oauth2/token',
 			data: new URLSearchParams(this.params),
@@ -145,8 +143,8 @@ module.exports = class Authenticate {
 	}
 
 	// ---------- Get the user data ---------- //
-	getUserdata = (tokenType, token) => {
-		return axios({
+	getUserdata = async (tokenType, token) => {
+		return await axios({
 			method: 'get',
 			url: 'https://discord.com/api/users/@me',
 			headers: {
@@ -157,12 +155,9 @@ module.exports = class Authenticate {
 
 	// ---------- store the info we want from discord response ---------- //
 	localizeInfo = payload => {
-		return new Promise((resolve, reject) => {
-			Object.keys(payload)
-				.filter(key => key in this.userData)
-				.forEach(key => (this.userData[key] = payload[key]))
-			resolve(payload)
-		})
+		return Object.keys(payload)
+			.filter(key => key in this.userData)
+			.forEach(key => (this.userData[key] = payload[key]))
 	}
 
 	// ---------- save the user tokens ---------- //
@@ -172,9 +167,9 @@ module.exports = class Authenticate {
 		)
 		for (const [key, value] of Object.entries(userData)) {
 			let storeKey = `auth.${key}`
-			console.log(storeKey)
 			await storage.set(storeKey, value)
 		}
+		return true
 	}
 
 	// ---------- help func to get info ---------- //

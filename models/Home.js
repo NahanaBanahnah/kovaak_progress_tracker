@@ -1,6 +1,6 @@
 const axios = require('axios').default
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs').promises
 const storage = require('electron-settings')
 
 const chokidar = require('chokidar')
@@ -51,19 +51,11 @@ module.exports = class Home {
 	}
 
 	// ---------- get the users records or return an empty obj ---------- //
-	getRecords = () => {
-		return new Promise(resolve => {
-			axios
-				.get(
-					`${this.database}/progress.json?orderBy="user"&equalTo="${this.user}"`
-				)
-				.then(res => {
-					resolve(res.data)
-				})
-				.catch(e => {
-					resolve({})
-				})
-		})
+	getRecords = async () => {
+		const resp = await axios.get(
+			`${this.database}/progress.json?orderBy="user"&equalTo="${this.user}"`
+		)
+		return resp.data
 	}
 
 	// ---------- when a record is added push to db ---------- //
@@ -74,23 +66,17 @@ module.exports = class Home {
 			...score,
 			user: this.user,
 		}
-		return new Promise(resolve => {
-			axios
-				.post(`${this.database}/progress.json`, payload)
-				.then(res => {
-					let added = {}
-					added[res.data.name] = { ...payload }
+		const res = await axios.post(`${this.database}/progress.json`, payload)
 
-					this.records = {
-						...this.records,
-						...added,
-					}
-					resolve(added)
-				})
-				.catch(e => {
-					console.log(e.error)
-				})
-		})
+		let added = {}
+		added[res.data.name] = { ...payload }
+
+		this.records = {
+			...this.records,
+			...added,
+		}
+
+		return added
 	}
 
 	// ---------- pull info from the name ---------- //
@@ -106,23 +92,13 @@ module.exports = class Home {
 	}
 
 	// ---------- find the score in the csv file ---------- //
-	findScore = file => {
-		return new Promise(resolve => {
-			fs.readFile(file, (error, data) => {
-				if (error) {
-					return console.log('error reading file')
-				}
-				neatCsv(data)
-					.then(parsedData => {
-						const score = parsedData.filter(obj =>
-							Object.keys(obj).some(key =>
-								obj[key].includes('Score:')
-							)
-						)
-						resolve({ score: score[0].Timestamp })
-					})
-					.catch(e => console.log(e))
-			})
-		})
+	findScore = async file => {
+		const data = await fs.readFile(file)
+		const parsedData = await neatCsv(data)
+
+		const score = parsedData.filter(obj =>
+			Object.keys(obj).some(key => obj[key].includes('Score:'))
+		)
+		return { score: score[0].Timestamp }
 	}
 }
