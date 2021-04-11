@@ -61,7 +61,6 @@ const createWindows = () => {
 // ---------- checking for updates ---------- //
 const checkForUpdates = () => {
 	autoUpdater.checkForUpdatesAndNotify()
-	console.log('checking updates')
 }
 
 // ---------- only allow one instance ---------- //
