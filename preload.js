@@ -1,6 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron')
-
-const path = require('path')
 const validChannels = [
 	'loadContent',
 	'folderSelect',
@@ -33,6 +31,8 @@ contextBridge.exposeInMainWorld('api', {
 	maximize: () => ipcRenderer.send('maximize'),
 	minimize: () => ipcRenderer.send('minimize'),
 	restore: () => ipcRenderer.send('restore'),
+	getColors: async () => await ipcRenderer.invoke('getColors'),
+	setColors: async payload => await ipcRenderer.invoke('setColors', payload),
 })
 
 //let currWindow = remote.BrowserWindow.getFocusedWindow()
