@@ -395,13 +395,11 @@ const buildDataset = async (records, labels) => {
 			}
 		})
 	}
-	console.log(obj)
 	return obj
 }
 
 const getColors = async title => {
 	let userPrefs = await window.api.getColors()
-	console.log(userPrefs)
 	userPrefs = userPrefs ? userPrefs : []
 	let custom = true
 	let color
@@ -447,7 +445,6 @@ const getColors = async title => {
 		color: { ...color },
 	}
 	userPrefs.push(newPref)
-	console.log('bottmo', userPrefs)
 	await window.api.setColors(userPrefs)
 
 	//then return color as rgb array
@@ -499,7 +496,6 @@ const updateCharts = async records => {
 	const useable = getUsableRecords(records)
 	const labels = buildLabels(useable)
 	const dataset = await buildDataset(useable, labels)
-	console.log('updating')
 	chart.data.labels = labels.labels
 	chart.data.datasets = dataset
 
