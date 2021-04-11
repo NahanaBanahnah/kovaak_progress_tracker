@@ -12,7 +12,7 @@
 
 # General
 
--   [] - Autoupdate from repo
+-   [x] -   Autoupdate from repo
 -   [x] -   On intial setup return back button after settings
 -   [x] -   On initial setup show '...Watching' when watching
 -   [x] -   On initial setup start file watching and adding

@@ -1,27 +1,32 @@
 const axios = require('axios').default
 const path = require('path')
 const fs = require('fs')
-const Store = require('electron-store')
-const store = new Store({ name: 'config.main' })
+const storage = require('electron-settings')
+
 const chokidar = require('chokidar')
 const neatCsv = require('neat-csv')
 
 module.exports = class Home {
-	constructor(windows = null, database = null, saveDirectory = null) {
+	constructor(windows = null) {
 		this.windows = windows
-		this.saveDirectory = saveDirectory
-			? saveDirectory
-			: store.get('saveDirectory')
-		this.watchPath = path.join(this.saveDirectory, 'FPSAimTrainer', 'stats')
-		this.database = database ? database : store.get('database')
-		this.user = store.get('id')
+		this.saveDirectory = null
+		this.database = null
+		this.user = null
 		this.records = null
 	}
 
 	// ---------- start the watching ---------- //
 
-	initWatch = async () => {
-		//first let get any current records
+	initWatch = async (saveDirectory = null, database = null) => {
+		//set some settings as they aren't always set
+		this.saveDirectory = saveDirectory
+			? saveDirectory
+			: await storage.get('settings.saveDirectory')
+		this.database = database
+			? database
+			: await storage.get('settings.database')
+		this.user = await storage.get('auth.id')
+		this.watchPath = path.join(this.saveDirectory, 'FPSAimTrainer', 'stats')
 		this.records = await this.getRecords()
 
 		//tell main we're watching

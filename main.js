@@ -7,13 +7,17 @@ const {
 	Menu,
 	Tray,
 	Notification,
+	ipcRenderer,
 } = require('electron')
 
 const { autoUpdater } = require('electron-updater')
 const path = require('path')
 const fs = require('fs')
-const Store = require('electron-store')
-const store = new Store({ name: 'config.main' })
+const storage = require('electron-settings')
+storage.configure({
+	fileName: 'settings.json',
+	prettify: true,
+})
 
 const Authenticate = require(path.join(__dirname, 'models', 'Authenticate.js'))
 const Settings = require(path.join(__dirname, 'models', 'Settings.js'))
@@ -24,6 +28,7 @@ let tray = null
 
 const authenticate = new Authenticate(windows, session)
 const settings = new Settings()
+const home = new Home(windows)
 
 // ---------- create the main window and auth modal  ---------- //
 const createWindows = () => {
@@ -101,27 +106,30 @@ if (!gotTheLock) {
 		tray.setContextMenu(contextMenu)
 
 		// ---------- on DOM load the main window  ---------- //
-		windows.main.once('ready-to-show', () => {
+		windows.main.once('ready-to-show', async () => {
 			windows.main.show()
 			checkForUpdates()
 			setInterval(checkForUpdates, 1000 * 60 * 15)
 
 			//check if the user is authnticated
-			//if yes check if they have settings // if they don't open the settings page for initial setup
-			//if no open the auth
+			const userIsAuth = await authenticate.isAuthenticated()
 
-			authenticate
-				.isAuthenticated()
-				.then(() => {
-					if (!settings.settingsSet()) {
-						sendContent('home', 'settings', true)
-					} else {
-						const home = new Home(windows)
-						sendContent('home', 'home')
-						home.initWatch()
-					}
-				})
-				.catch(() => sendContent('login'))
+			//user is authnticated but are there settings
+			if (userIsAuth) {
+				let settingsSet = await settings.settingsSet()
+
+				//there are not settings so lets have them enter their settings
+				if (!settingsSet) {
+					sendContent('home', 'settings', true)
+				} else {
+					//there are settings so take them home
+					sendContent('home', 'home')
+					home.initWatch()
+				}
+			} else {
+				//no auth so have them login
+				sendContent('login')
+			}
 		})
 
 		// ---------- handle max and restore caused by things other than the buttons (double click, drag, etc) ---------- //
@@ -151,17 +159,17 @@ ipcMain.on('saveSettings', (e, payload) => {
 	//if its the first start init home here, and pass in the database & save here
 	//this eliminates the possibility of trying to start this before the settings are saved
 	if (payload.initial) {
-		const home = new Home(windows, payload.database, payload.saveDirectory)
-		home.initWatch()
+		home.initWatch(payload.saveDirectory, payload.database)
 	}
 })
 
 // ---------- Window Buttons ---------- //
-ipcMain.on('close', event => {
+ipcMain.on('close', async event => {
 	event.preventDefault()
 	findWindow(event).hide()
 
-	const notified = store.get('notified')
+	const notified = await storage.get('settings.notified')
+
 	if (!notified) {
 		const notification = {
 			title: 'Your Progress Is Still Be Tracked',
@@ -169,12 +177,20 @@ ipcMain.on('close', event => {
 		}
 		new Notification(notification).show()
 
-		store.set('notified', true)
+		storage.set('settings.notified', true)
 	}
 })
 ipcMain.on('minimize', event => findWindow(event).minimize())
 ipcMain.on('maximize', event => findWindow(event).maximize())
 ipcMain.on('restore', event => findWindow(event).restore())
+
+ipcMain.handle('getColors', async () => {
+	return await storage.get('colors')
+})
+
+ipcMain.handle('setColors', async (e, payload) => {
+	return await storage.set('colors', payload)
+})
 
 // ---------- updating ---------- //
 
@@ -197,14 +213,17 @@ const findWindow = event => {
 	return BrowserWindow.fromWebContents(event.sender)
 }
 //tiny templating
-const sendContent = (file, section = false, initial = false) => {
+const sendContent = async (file, section = false, initial = false) => {
+	let userInfo = await authenticate.getUserInfo()
+	let userSettings = await settings.getSettings()
+
 	fs.readFile(
 		path.join(__dirname, 'app', 'html', `${file}.html`),
 		'utf8',
 		(err, html) => {
 			const payload = {
-				...authenticate.getUserInfo(),
-				...settings.getSettings(),
+				...userInfo,
+				...userSettings,
 				html: html,
 				section: section,
 				initial: initial,
