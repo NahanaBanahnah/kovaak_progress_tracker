@@ -295,6 +295,8 @@ const openSettings = () => {
 //dropdown options
 const setOptions = records => {
 	const useable = getUsableRecords(records)
+	useable.sort((a, b) => a[0].localeCompare(b[0]))
+
 	const options = useable.map(k => {
 		return `<option value="${k[0]}">${k[0]}</option>`
 	})
@@ -395,6 +397,7 @@ const buildDataset = async (records, labels) => {
 			}
 		})
 	}
+	obj.sort((a, b) => a.label.localeCompare(b.label))
 	return obj
 }
 
