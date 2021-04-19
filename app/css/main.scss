@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 @import 'scss/loader';
 @import 'scss/login';
 @import 'scss/settings';
 @import 'scss/home';
 @import 'scss/animation';
+@import 'scss/customize';
 @import 'scss/vars';
 
 * {
@@ -29,7 +31,7 @@ body {
 
 body {
 	font-family: 'Inter', sans-serif;
-	font-size: 16px;
+	font-size: 1rem;
 	line-height: 24px;
 	background: #161616;
 	color: rgba(255, 255, 255, 0.9);
@@ -142,6 +144,13 @@ div#settings.close {
 	pointer-events: none;
 }
 
+.material-icons {
+	user-select: none;
+}
+.material-icons:hover {
+	color: $blue;
+}
+
 div.container {
 	width: 100%;
 	height: 100%;
@@ -162,28 +171,29 @@ div.container {
 			background-color: transparent;
 			outline: none;
 			cursor: pointer;
-
-			img,
-			svg {
-				pointer-events: none;
-			}
-			svg {
-				fill: $white;
-			}
 		}
 
-		button#settings {
+		button#settings,
+		button#customize {
 			display: grid;
 			grid-template-columns: 1fr 40px;
 			width: auto;
 			align-items: center;
+			justify-items: center;
+
+			div {
+				pointer-events: none;
+				color: $white;
+			}
 
 			span {
 				font-weight: 700;
 				text-transform: uppercase;
 				position: relative;
-				right: 0px;
+				right: 30px;
 				opacity: 0;
+				width: 0px;
+				pointer-events: none;
 			}
 		}
 
@@ -194,20 +204,30 @@ div.container {
 		button#back {
 			pointer-events: initial;
 			opacity: 1;
+
+			div {
+				color: $white;
+				pointer-events: none;
+			}
 		}
 
-		button#settings:hover > span {
-			right: 25px;
+		button#settings:hover > span,
+		button#customize:hover > span,
+		button#customize.on > span {
+			right: 0px;
 			opacity: 1;
+			width: 76px;
 			color: $blue;
 		}
-		button#settings:hover > svg {
+		button#settings:hover > div,
+		button#customize:hover > div,
+		button#customize.on > div {
 			transform: rotate(-90deg);
-			fill: $blue;
+			color: $blue;
 		}
-		button#back:hover > svg {
+		button#back:hover > div {
 			transform: translate(-15px);
-			fill: $blue;
+			color: $blue;
 		}
 		button.pfp {
 			background-color: rgba(0, 0, 0, 0.5);
@@ -240,7 +260,7 @@ div.container {
 
 		div.rightBar {
 			justify-self: end;
-			display: grid;
+			display: flex;
 			grid-template-columns: 1fr 40px;
 			gap: 24px;
 			padding-right: 32px;
@@ -284,7 +304,7 @@ footer {
 }
 
 .ui-small {
-	font-size: 12px;
+	font-size: 0.75rem;
 	line-height: 11px;
 	letter-spacing: 0.05em;
 }

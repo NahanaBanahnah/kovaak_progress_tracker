@@ -8,7 +8,7 @@ const standard = [
 	{ r: 245, g: 245, b: 148 },
 ]
 
-const ui = [
+const material = [
 	{ r: 239, g: 154, b: 154 },
 	{ r: 244, g: 143, b: 177 },
 	{ r: 206, g: 147, b: 216 },
@@ -29,4 +29,4 @@ const ui = [
 	{ r: 176, g: 190, b: 197 },
 ]
 
-export { standard, ui }
+export { standard, material }
