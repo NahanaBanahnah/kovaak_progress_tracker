@@ -14,6 +14,7 @@ const validChannels = [
 	'updateAvailable',
 	'updateDownloaded',
 	'restartToUpdate',
+	'sendContent',
 ]
 
 contextBridge.exposeInMainWorld('api', {
@@ -34,6 +35,3 @@ contextBridge.exposeInMainWorld('api', {
 	getColors: async () => await ipcRenderer.invoke('getColors'),
 	setColors: async payload => await ipcRenderer.invoke('setColors', payload),
 })
-
-//let currWindow = remote.BrowserWindow.getFocusedWindow()
-// let parentWindow = remote.getCurrentWindow()

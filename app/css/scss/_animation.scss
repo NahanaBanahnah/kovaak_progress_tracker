@@ -13,10 +13,18 @@ button > svg,
 span#added,
 select,
 #update,
-.spinner {
+.spinner,
+.material-icons,
+div.row,
+div.hide,
+.chart_container {
 	transition: all 0.25s ease-in-out;
 }
 
 button#back {
 	transition: opacity 0.25s ease-in-out 0.25s;
+}
+
+div#customizeDrawer {
+	transition: left 0.35s ease-in-out, opacity 0.35s ease-in-out;
 }

@@ -30,7 +30,11 @@ module.exports = class Home {
 		this.records = await this.getRecords()
 
 		//tell main we're watching
-		this.windows.main.send('initProgress', this.records)
+		let prefs = await storage.get('colors')
+		this.windows.main.send('initProgress', {
+			records: this.records,
+			prefs: prefs,
+		})
 
 		//watch the directory
 		chokidar.watch(this.watchPath).on('add', async path => {
@@ -53,9 +57,10 @@ module.exports = class Home {
 	// ---------- get the users records or return an empty obj ---------- //
 	getRecords = async () => {
 		const resp = await axios.get(
-			`${this.database}/progress.json?orderBy="user"&equalTo="${this.user}"`
+			`${this.database}/progress/${this.user}.json`
 		)
-		return resp.data
+		let data = resp.data ? resp.data : {}
+		return data
 	}
 
 	// ---------- when a record is added push to db ---------- //
@@ -66,7 +71,10 @@ module.exports = class Home {
 			...score,
 			user: this.user,
 		}
-		const res = await axios.post(`${this.database}/progress.json`, payload)
+		const res = await axios.post(
+			`${this.database}/progress/${this.user}.json`,
+			payload
+		)
 
 		let added = {}
 		added[res.data.name] = { ...payload }

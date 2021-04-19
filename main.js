@@ -204,6 +204,11 @@ ipcMain.on('restartToUpdate', () => {
 	autoUpdater.quitAndInstall()
 })
 
+ipcMain.on('sendContent', () => {
+	sendContent('home', 'home')
+	home.initWatch()
+})
+
 /*-- HELPER FUNCTIONS
     ================================================== --*/
 
