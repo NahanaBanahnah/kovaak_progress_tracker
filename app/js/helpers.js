@@ -82,7 +82,7 @@ export const form = {
 	submit: () => {
 		const ele = document.querySelector('#submit')
 		const folder = document.querySelector('#folder')
-		const database = document.querySelector('#database')
+		// const database = document.querySelector('#database')
 		let initial = false
 
 		if (ele.dataset.initial === 'true') {
@@ -90,7 +90,7 @@ export const form = {
 		}
 		const payload = {
 			saveDirectory: folder.value,
-			database: database.value,
+			// database: database.value,
 			initial: initial,
 		}
 		window.api.send('saveSettings', payload)

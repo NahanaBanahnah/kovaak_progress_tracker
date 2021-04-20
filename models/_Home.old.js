@@ -1,15 +1,10 @@
-const app = require('electron').app
+const axios = require('axios').default
 const path = require('path')
 const fs = require('fs').promises
 const storage = require('electron-settings')
+
 const chokidar = require('chokidar')
 const neatCsv = require('neat-csv')
-
-const { v1: uuidv1 } = require('uuid')
-
-const Datastore = require('nedb-promises')
-const db = path.join(app.getPath('userData'), 'database.db')
-let datastore = Datastore.create(db)
 
 module.exports = class Home {
 	constructor(windows = null) {
@@ -27,6 +22,10 @@ module.exports = class Home {
 		this.saveDirectory = saveDirectory
 			? saveDirectory
 			: await storage.get('settings.saveDirectory')
+		this.database = database
+			? database
+			: await storage.get('settings.database')
+		this.user = await storage.get('auth.id')
 		this.watchPath = path.join(this.saveDirectory, 'FPSAimTrainer', 'stats')
 		this.records = await this.getRecords()
 
@@ -57,7 +56,10 @@ module.exports = class Home {
 
 	// ---------- get the users records or return an empty obj ---------- //
 	getRecords = async () => {
-		const data = await datastore.find()
+		const resp = await axios.get(
+			`${this.database}/progress/${this.user}.json`
+		)
+		let data = resp.data ? resp.data : {}
 		return data
 	}
 
@@ -67,10 +69,15 @@ module.exports = class Home {
 		let payload = {
 			...name,
 			...score,
+			user: this.user,
 		}
-		const res = await datastore.insert(payload)
+		const res = await axios.post(
+			`${this.database}/progress/${this.user}.json`,
+			payload
+		)
+
 		let added = {}
-		added[res._id] = { ...payload }
+		added[res.data.name] = { ...payload }
 
 		this.records = {
 			...this.records,
