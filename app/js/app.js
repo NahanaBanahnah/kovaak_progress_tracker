@@ -161,6 +161,7 @@ window.api.receive('loadContent', payload => {
 window.api.receive('updateAvailable', () => ui.updateAvailable())
 window.api.receive('updateDownloaded', () => ui.updateDownloaded())
 
-document.addEventListener('DOMContentLoaded', () => {
-	window.api.send('sendContent')
-})
+// ---------- UNCOMMENT ONLY WHEN WORKING ON UI  ---------- //
+// document.addEventListener('DOMContentLoaded', () => {
+// 	window.api.send('sendContent')
+// })

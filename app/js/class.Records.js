@@ -27,6 +27,7 @@ export default class Records {
 		const filteredRecords = Object.fromEntries(
 			Object.entries(sortedRecords).filter(([_, k]) => k.length > 1)
 		)
+		console.log(filteredRecords)
 
 		//finally combine the records and the user prefs (colors, hidden)
 		for (const [k, v] of Object.entries(filteredRecords)) {
