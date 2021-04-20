@@ -2,12 +2,10 @@ const {
 	app,
 	BrowserWindow,
 	ipcMain,
-	session,
 	dialog,
 	Menu,
 	Tray,
 	Notification,
-	ipcRenderer,
 } = require('electron')
 
 const { autoUpdater } = require('electron-updater')
@@ -19,14 +17,12 @@ storage.configure({
 	prettify: true,
 })
 
-const Authenticate = require(path.join(__dirname, 'models', 'Authenticate.js'))
 const Settings = require(path.join(__dirname, 'models', 'Settings.js'))
 const Home = require(path.join(__dirname, 'models', 'Home.js'))
 
 const windows = {}
 let tray = null
 
-const authenticate = new Authenticate(windows, session)
 const settings = new Settings()
 const home = new Home(windows)
 
@@ -110,24 +106,16 @@ if (!gotTheLock) {
 			checkForUpdates()
 			setInterval(checkForUpdates, 1000 * 60 * 15)
 
-			//check if the user is authnticated
-			const userIsAuth = await authenticate.isAuthenticated()
+			//are the user users settings set?
+			const settingsSet = await settings.settingsSet()
 
-			//user is authnticated but are there settings
-			if (userIsAuth) {
-				let settingsSet = await settings.settingsSet()
-
-				//there are not settings so lets have them enter their settings
-				if (!settingsSet) {
-					sendContent('home', 'settings', true)
-				} else {
-					//there are settings so take them home
-					sendContent('home', 'home')
-					home.initWatch()
-				}
+			//there are not settings so lets have them enter their settings
+			if (!settingsSet) {
+				sendContent('home', 'settings', true)
 			} else {
-				//no auth so have them login
-				sendContent('login')
+				//there are settings so take them home
+				sendContent('home', 'home')
+				home.initWatch()
 			}
 		})
 
@@ -150,7 +138,6 @@ if (!gotTheLock) {
     ================================================== --*/
 
 // ---------- General Sending ---------- //
-ipcMain.on('openAuth', () => authenticate.openAuth())
 ipcMain.on('openFileBrowser', () => openFileDialog())
 ipcMain.on('saveSettings', (e, payload) => {
 	settings.saveSettings(payload)
@@ -204,11 +191,6 @@ ipcMain.on('restartToUpdate', () => {
 	autoUpdater.quitAndInstall()
 })
 
-ipcMain.on('sendContent', () => {
-	sendContent('home', 'home')
-	home.initWatch()
-})
-
 /*-- HELPER FUNCTIONS
     ================================================== --*/
 
@@ -218,7 +200,6 @@ const findWindow = event => {
 }
 //tiny templating
 const sendContent = async (file, section = false, initial = false) => {
-	let userInfo = await authenticate.getUserInfo()
 	let userSettings = await settings.getSettings()
 
 	fs.readFile(
@@ -226,7 +207,6 @@ const sendContent = async (file, section = false, initial = false) => {
 		'utf8',
 		(err, html) => {
 			const payload = {
-				...userInfo,
 				...userSettings,
 				html: html,
 				section: section,
@@ -266,3 +246,9 @@ const openFileDialog = () => {
 			}
 		})
 }
+
+// ---------- UNCOMMENT ONLY WHEN WORKING ON UI  ---------- //
+// ipcMain.on('sendContent', () => {
+// 	sendContent('home', 'home')
+// 	home.initWatch()
+// })
