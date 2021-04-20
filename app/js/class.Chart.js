@@ -136,8 +136,13 @@ export default class Charts extends Records {
 
 	setSingleView = toView => {
 		this.chart.data.datasets.forEach(dataset => {
-			dataset.hidden = dataset.label === toView ? false : true
-			dataset.hidden = toView === 'all' ? false : dataset.hidden
+			//only run this if the row is not hidden in the user prefs
+			if (!dataset.label.includes('hideme')) {
+				//set if the row is hidden or now
+				dataset.hidden = dataset.label === toView ? false : true
+				//if its "view" all unhide all
+				dataset.hidden = toView === 'all' ? false : dataset.hidden
+			}
 		})
 
 		this.chart.update()
@@ -145,7 +150,7 @@ export default class Charts extends Records {
 
 	//reset the default charjs click in the legend
 	resetClickEvent = (e, legend) => {
-		const obj = chart.data.datasets
+		const obj = this.chart.data.datasets
 		const key = Object.keys(obj).find(k => obj[k]['label'] === legend.text)
 
 		obj[key]['hidden'] = obj[key]['hidden'] ? false : true
