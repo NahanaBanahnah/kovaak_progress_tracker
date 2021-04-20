@@ -145,7 +145,7 @@ export default class Charts extends Records {
 
 	//reset the default charjs click in the legend
 	resetClickEvent = (e, legend) => {
-		const obj = chart.data.datasets
+		const obj = this.chart.data.datasets
 		const key = Object.keys(obj).find(k => obj[k]['label'] === legend.text)
 
 		obj[key]['hidden'] = obj[key]['hidden'] ? false : true
