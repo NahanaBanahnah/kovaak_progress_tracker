@@ -1,0 +1,71 @@
+@import 'vars';
+
+div#changelog {
+	display: grid;
+	grid-template-rows: 64px auto;
+	padding: 0 32px;
+	overflow-y: scroll;
+
+	h1 {
+		font-weight: bold;
+		font-size: 28px;
+		line-height: 29px;
+		letter-spacing: 0.05em;
+		color: transparent;
+		color: rgba(255, 255, 255, 0.3);
+		align-self: center;
+		justify-self: center;
+	}
+
+	div#changeContent {
+		display: grid;
+		grid-template-columns: 32% 1fr;
+		gap: 0px 24px;
+		align-content: flex-start;
+
+		h4 {
+			color: rgba(255, 255, 255, 0.4);
+			height: 32px;
+		}
+		h4.version {
+			font-size: 0.75rem;
+			justify-self: end;
+		}
+		h4.date {
+			font-size: 0.875rem;
+		}
+		h5 {
+			text-transform: uppercase;
+			font-size: 1rem;
+			color: $blue;
+			grid-column: 2 / span 2;
+			align-self: center;
+			padding: 8px 0;
+		}
+		a {
+			text-decoration: none;
+			color: rgba($blue, 0.5);
+		}
+		a:hover {
+			color: rgba($blue, 0.9);
+		}
+		ul {
+			grid-column: 2 / span 2;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			padding-bottom: 8px;
+			margin-bottom: 16px;
+			height: fit-content;
+
+			li {
+				list-style: square inside;
+				font-size: 0.875rem;
+				color: rgba(255, 255, 255, 0.6);
+
+				strong {
+					color: rgba(255, 255, 255, 0.8);
+					font-weight: 700;
+				}
+			}
+		}
+	}
+}

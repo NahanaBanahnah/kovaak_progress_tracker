@@ -79,13 +79,16 @@ div#customizeContainer {
 		opacity: 0.2;
 	}
 }
-div#customizeContainer::-webkit-scrollbar {
+div#customizeContainer::-webkit-scrollbar,
+div#changelog::-webkit-scrollbar {
 	width: 8px;
 }
-div#customizeContainer::-webkit-scrollbar-corner {
+div#customizeContainer::-webkit-scrollbar-corner,
+div#changelog::-webkit-scrollbar-corner {
 	background: rgba(0, 0, 0, 0);
 }
-div#customizeContainer::-webkit-scrollbar-thumb {
+div#customizeContainer::-webkit-scrollbar-thumb,
+div#changelog::-webkit-scrollbar-thumb {
 	background-color: rgba(50, 50, 50, 0.4);
 	border-radius: 64px;
 
@@ -94,7 +97,8 @@ div#customizeContainer::-webkit-scrollbar-thumb {
 	min-height: 32px;
 }
 
-div#customizeContainer::-webkit-scrollbar-track {
+div#customizeContainer::-webkit-scrollbar-track,
+div#changelog::-webkit-scrollbar-track {
 	background-color: rgba(0, 0, 0, 0.3);
 	border-radius: 64px;
 }

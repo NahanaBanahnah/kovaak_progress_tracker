@@ -6,16 +6,19 @@ const {
 	Menu,
 	Tray,
 	Notification,
+	shell,
 } = require('electron')
 
 const { autoUpdater } = require('electron-updater')
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs').promises
 const storage = require('electron-settings')
 storage.configure({
 	fileName: 'settings.json',
 	prettify: true,
 })
+
+const marked = require('marked')
 
 const Settings = require(path.join(__dirname, 'models', 'Settings.js'))
 const Home = require(path.join(__dirname, 'models', 'Home.js'))
@@ -51,7 +54,22 @@ const createWindows = () => {
 	windows.modal = modal
 	windows.modal.setMenuBarVisibility(false)
 
+	const changelog = new BrowserWindow({
+		modal: true,
+		show: false,
+		frame: false,
+		parent: mainWindow,
+		width: 800,
+		height: 800,
+		webPreferences: {
+			preload: path.join(__dirname, 'preload.js'),
+		},
+	})
+
+	windows.changelog = changelog
+
 	windows.main.loadFile(path.join(__dirname, 'app', 'main.html'))
+	windows.changelog.loadFile(path.join(__dirname, 'app', 'changelog.html'))
 }
 
 // ---------- checking for updates ---------- //
@@ -102,7 +120,15 @@ if (!gotTheLock) {
 
 		// ---------- on DOM load the main window  ---------- //
 		windows.main.once('ready-to-show', async () => {
+			const userVersion = await storage.get('settings.version')
+			if (!userVersion || userVersion < app.getVersion()) {
+				await showChangelog()
+				windows.changelog.show()
+				storage.set('settings.version', app.getVersion())
+			}
+
 			windows.main.show()
+
 			checkForUpdates()
 			setInterval(checkForUpdates, 1000 * 60 * 15)
 
@@ -132,6 +158,9 @@ if (!gotTheLock) {
 			event.preventDefault()
 			windows.modal.hide()
 		})
+
+		// ---------- forward links from changelog to browser ---------- //
+		windows.changelog.webContents.on('will-navigate', handleRedirect)
 	})
 }
 /*-- IPC PING PONG
@@ -191,6 +220,11 @@ ipcMain.on('restartToUpdate', () => {
 	autoUpdater.quitAndInstall()
 })
 
+ipcMain.on('openChangelog', async () => {
+	await showChangelog()
+	windows.changelog.show()
+})
+
 /*-- HELPER FUNCTIONS
     ================================================== --*/
 
@@ -202,20 +236,24 @@ const findWindow = event => {
 const sendContent = async (file, section = false, initial = false) => {
 	let userSettings = await settings.getSettings()
 
-	fs.readFile(
+	const html = await fs.readFile(
 		path.join(__dirname, 'app', 'html', `${file}.html`),
-		'utf8',
-		(err, html) => {
-			const payload = {
-				...userSettings,
-				html: html,
-				section: section,
-				initial: initial,
-				version: app.getVersion(),
-			}
-			windows.main.send('loadContent', payload)
-		}
+		'utf8'
 	)
+	const payload = {
+		...userSettings,
+		html: html,
+		section: section,
+		initial: initial,
+		version: app.getVersion(),
+	}
+	windows.main.send('loadContent', payload)
+}
+
+const showChangelog = async () => {
+	const md = await fs.readFile(path.join(__dirname, 'CHANGELOG.md'), 'utf8')
+	marked(md)
+	windows.changelog.send('initChangelog', marked(md))
 }
 
 //file browser
@@ -225,30 +263,70 @@ const openFileDialog = () => {
 			properties: ['openDirectory'],
 			title: 'Browse For Your Kovaak Instalation Directory',
 		})
-		.then(file => {
+		.then(async file => {
 			if (!file.canceled) {
 				const dir = path.join(
 					file.filePaths[0],
 					'FPSAimTrainer',
 					'stats'
 				)
-				let error = false
-				fs.stat(dir, (err, stats) => {
-					if (err) {
-						error = true
-					}
+				try {
+					await fs.stat(dir)
+					windows.main.send('folderSelect', {
+						case: 'filePicked',
+						file: file.filePaths,
+					})
+				} catch (error) {
 					windows.main.send('folderSelect', {
 						case: 'filePicked',
 						file: file.filePaths,
 						error: error,
 					})
-				})
+				}
 			}
 		})
+}
+
+//changelog parser
+const renderer = {
+	heading(text, level) {
+		if (level === 4) {
+			let date = text.match(/\((.*)\)/).pop()
+			let dateObj = new Date(date)
+			let display = dateObj.toLocaleString('default', {
+				month: 'short',
+				year: 'numeric',
+				day: 'numeric',
+			})
+			let version = text.split(' ').shift()
+
+			return `
+            <h${level} class="version">Version ${version}</h${level}>
+            <h${level} class="date">${display}</h${level}>`
+		} else {
+			return `<h${level}>${text}</h${level}>`
+		}
+	},
+}
+marked.use({ renderer })
+
+//forward links to browser
+const handleRedirect = (e, url) => {
+	if (url !== e.sender.getURL()) {
+		e.preventDefault()
+		shell.openExternal(url)
+	}
 }
 
 // ---------- UNCOMMENT ONLY WHEN WORKING ON UI  ---------- //
 // ipcMain.on('sendContent', () => {
 // 	sendContent('home', 'home')
 // 	home.initWatch()
+// })
+
+// ipcMain.on('sendContent', () => {
+// 	fs.readFile(path.join(__dirname, 'CHANGELOG.md'), 'utf8', (err, md) => {
+// 		marked(md)
+// 		windows.changelog.send('initChangelog', marked(md))
+// 	})
 // })
