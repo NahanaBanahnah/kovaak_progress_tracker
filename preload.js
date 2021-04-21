@@ -15,6 +15,8 @@ const validChannels = [
 	'updateDownloaded',
 	'restartToUpdate',
 	'sendContent',
+	'initChangelog',
+	'openChangelog',
 ]
 
 contextBridge.exposeInMainWorld('api', {

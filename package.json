@@ -16,6 +16,7 @@
 		"chokidar": "^3.5.1",
 		"electron-settings": "^4.0.2",
 		"electron-updater": "^4.3.8",
+		"marked": "^2.0.3",
 		"neat-csv": "^6.0.1",
 		"nedb-promises": "^4.1.2",
 		"url": "^0.11.0",

@@ -6,6 +6,10 @@ input {
 	transition: border 0.25s ease-in-out;
 }
 
+div#changelog a {
+	transition: 0.25s ease-in-out;
+}
+
 div#settings,
 div#home,
 button > span,

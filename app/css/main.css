@@ -414,6 +414,11 @@ input {
   transition: border 0.25s ease-in-out;
 }
 
+div#changelog a {
+  -webkit-transition: 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
+}
+
 div#settings,
 div#home,
 button > span,
@@ -542,15 +547,18 @@ div#customizeContainer div.hide {
   opacity: 0.2;
 }
 
-div#customizeContainer::-webkit-scrollbar {
+div#customizeContainer::-webkit-scrollbar,
+div#changelog::-webkit-scrollbar {
   width: 8px;
 }
 
-div#customizeContainer::-webkit-scrollbar-corner {
+div#customizeContainer::-webkit-scrollbar-corner,
+div#changelog::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0);
 }
 
-div#customizeContainer::-webkit-scrollbar-thumb {
+div#customizeContainer::-webkit-scrollbar-thumb,
+div#changelog::-webkit-scrollbar-thumb {
   background-color: rgba(50, 50, 50, 0.4);
   border-radius: 64px;
   background-clip: content-box;
@@ -558,9 +566,103 @@ div#customizeContainer::-webkit-scrollbar-thumb {
   min-height: 32px;
 }
 
-div#customizeContainer::-webkit-scrollbar-track {
+div#customizeContainer::-webkit-scrollbar-track,
+div#changelog::-webkit-scrollbar-track {
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 64px;
+}
+
+div#changelog {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 64px auto;
+      grid-template-rows: 64px auto;
+  padding: 0 32px;
+  overflow-y: scroll;
+}
+
+div#changelog h1 {
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 29px;
+  letter-spacing: 0.05em;
+  color: transparent;
+  color: rgba(255, 255, 255, 0.3);
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
+div#changelog div#changeContent {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 32% 1fr;
+      grid-template-columns: 32% 1fr;
+  gap: 0px 24px;
+  -ms-flex-line-pack: start;
+      align-content: flex-start;
+}
+
+div#changelog div#changeContent h4 {
+  color: rgba(255, 255, 255, 0.4);
+  height: 32px;
+}
+
+div#changelog div#changeContent h4.version {
+  font-size: 0.75rem;
+  -ms-grid-column-align: end;
+      justify-self: end;
+}
+
+div#changelog div#changeContent h4.date {
+  font-size: 0.875rem;
+}
+
+div#changelog div#changeContent h5 {
+  text-transform: uppercase;
+  font-size: 1rem;
+  color: rgba(103, 208, 241, 0.9);
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-column: 2 / span 2;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  padding: 8px 0;
+}
+
+div#changelog div#changeContent a {
+  text-decoration: none;
+  color: rgba(103, 208, 241, 0.5);
+}
+
+div#changelog div#changeContent a:hover {
+  color: rgba(103, 208, 241, 0.9);
+}
+
+div#changelog div#changeContent ul {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-column: 2 / span 2;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+div#changelog div#changeContent ul li {
+  list-style: square inside;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+div#changelog div#changeContent ul li strong {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
 }
 
 * {
@@ -915,6 +1017,18 @@ footer div.left {
   -ms-grid-columns: auto auto auto 1fr;
       grid-template-columns: auto auto auto 1fr;
   gap: 16px;
+}
+
+footer div.left span#openChange {
+  cursor: pointer;
+}
+
+footer div.left span#openChange span#version {
+  pointer-events: none;
+}
+
+footer div.left span#openChange:hover {
+  color: rgba(103, 208, 241, 0.5);
 }
 
 footer div.right {

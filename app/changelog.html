@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="css/main.css" />
+		<title>Change Log</title>
+	</head>
+	<body>
+		<section>
+			<header>
+				<div id="windowTitle">
+					<span class="ui-small ui-white"
+						></span
+					>
+				</div>
+
+				<div class="windowControls">
+					<button id="btnClose">
+						<img
+							class="icon"
+							srcset="
+								./icons/window/close-w-10.png 1x,
+								./icons/window/close-w-12.png 1.25x,
+								./icons/window/close-w-15.png 1.5x,
+								./icons/window/close-w-15.png 1.75x,
+								./icons/window/close-w-20.png 2x,
+								./icons/window/close-w-20.png 2.25x,
+								./icons/window/close-w-24.png 2.5x,
+								./icons/window/close-w-30.png 3x,
+								./icons/window/close-w-30.png 3.5x
+							"
+							draggable="false"
+						/>
+					</button>
+				</div>
+			</header>
+
+			<div id="changelog">
+                <h1>Change Log</h1>
+                <div id="changeContent"></div>
+			</div>
+			<footer>
+				<div class="left ui-xsmall ui-gray">
+					
+				</div>
+				<div class="right ui-xsmall"></div>
+			</footer>
+		</section>  
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>              
+        <script src="js/changelog.js" type="module"></script>
+</html>

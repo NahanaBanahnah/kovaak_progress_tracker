@@ -38,6 +38,7 @@ document.addEventListener('click', e => {
 
 	// ---------- UPDATES ---------- //
 	evnt.listen(id, 'restartToUpdate', () => window.api.send('restartToUpdate'))
+	evnt.listen(id, 'openChange', () => window.api.send('openChangelog'))
 
 	// ---------- CUSTOMIZE  ---------- //
 	evnt.listen(ele.dataset.func, 'hide', () => charts.showHideRecord(ele))
